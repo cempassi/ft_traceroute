@@ -6,7 +6,7 @@
 #    By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/22 04:47:46 by cempassi          #+#    #+#              #
-#    Updated: 2021/06/20 20:56:06 by cempassi         ###   ########.fr        #
+#    Updated: 2021/06/20 20:59:55 by cempassi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -98,7 +98,7 @@ $(OBJM) : $(PATHO)%.o : %.c $(INCS)
 
 #Debug
 $(NAMEDB): $(CLEAR) $(LIBDB) $(PATHO) $(OBJD) $(OBJMD) $(INCS)
-	$(CC)  $(DFLAGS) $(LIBDB) $(OBJD) $(OBJMD) -o $@ 
+	$(CC)  $(DFLAGS) $(OBJD) $(OBJMD) $(LIBDB) -o $@ 
 	
 $(OBJD) : $(PATHO)db%.o : %.c $(INCS)
 	$(DEBUG) $(DFLAGS) $(CFLAGS) $(IFLAGS) $< -o $@
