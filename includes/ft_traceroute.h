@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 17:08:08 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 18:05:34 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,8 @@ typedef struct s_traceroute
 
 int  init_prgm(t_traceroute *traceroute, int ac, char **av);
 
+t_udppacket *generate_packet(t_traceroute *traceroute);
+
 /*
 *****************************************************
 ********************* DISPLAY ***********************
@@ -106,5 +108,6 @@ int  init_prgm(t_traceroute *traceroute, int ac, char **av);
 
 void display_help(char *name);
 void display_start(t_traceroute *traceroute, struct addrinfo *host);
-t_udppacket *generate_packet(t_traceroute *traceroute);
+void display_packet(t_udppacket *packet);
+
 #endif

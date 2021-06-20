@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 17:08:16 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 18:06:58 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,23 +40,31 @@ static struct addrinfo *resolve_host(t_traceroute *traceroute)
     return (host);
 }
 
-static int run_traceroute(t_traceroute *traceroute)
+static int traceroute_loop(t_traceroute *traceroute, t_addrinfo *host)
 {
-    struct addrinfo *host;
-    t_udppacket *    packet;
+    t_udppacket *packet;
 
+    (void)host;
     if ((packet = generate_packet(traceroute)) == NULL)
     {
         return (-1);
     }
+    display_packet(packet);
+    //ft_memdel((void **)&packet);
+    return (0);
+}
+
+static int run_traceroute(t_traceroute *traceroute)
+{
+    t_addrinfo *host;
+
     if ((host = resolve_host(traceroute)) == NULL)
     {
         return (-1);
     }
     display_start(traceroute, host);
-    // traceroute_loop(ping, host, packet);
+    traceroute_loop(traceroute, host);
     // display_stats(ping);
-    ft_memdel((void **)&packet);
     freeaddrinfo(host);
     return (0);
 }

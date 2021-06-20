@@ -6,12 +6,14 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:41:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 15:29:41 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 18:30:48 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "ft_printf.h"
 #include "ft_traceroute.h"
 #include <arpa/inet.h>
+#include <stdio.h>
 
 void display_help(char *name)
 {
@@ -39,4 +41,78 @@ void display_start(t_traceroute *traceroute, struct addrinfo *host)
     ft_printf("traceroute to %s (%s), %d max hops, %d bytes packets\n",
               traceroute->host, host_ip, traceroute->hops,
               traceroute->payload_size + sizeof(t_udppacket));
+}
+
+void display_ipheader(t_udppacket *packet)
+{
+     char src_ip[INET_ADDRSTRLEN];
+     char dst_ip[INET_ADDRSTRLEN];
+
+    inet_ntop(AF_INET, &packet->ipheader.src_addr, src_ip, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &packet->ipheader.dst_addr, dst_ip, INET_ADDRSTRLEN);
+    printf("-- ip header --\n"
+              "version: %d\n"
+              "ihl: %d\n"
+              "tos: %d\n"
+              "len: %d\n"
+              "id: %d\n"
+              "flags: %d\n"
+              "flag offset: %d\n"
+              "ttl: %d\n"
+              "proto: %d\n"
+              "checksum: %d\n"
+              "src_addr: %s\n"
+              "dst_addr: %s\n",
+              packet->ipheader.version, packet->ipheader.ihl,
+              packet->ipheader.tos, packet->ipheader.len, packet->ipheader.id,
+              packet->ipheader.flags, packet->ipheader.flag_offset,
+              packet->ipheader.ttl, packet->ipheader.proto,
+              packet->ipheader.checksum, src_ip, dst_ip);
+}
+
+void display_udpheader(t_udpheader *udpheader)
+{
+    printf("-- udp header --\n"
+              "src_port: %d\n"
+              "dst_port: %d\n"
+              "length: %d\n"
+              "checksum: %d\n",
+              udpheader->src_port, udpheader->dst_port, udpheader->lenght,
+              udpheader->checksum);
+}
+
+void display_packet(t_udppacket *packet)
+{
+     char src_ip[INET_ADDRSTRLEN];
+     char dst_ip[INET_ADDRSTRLEN];
+
+    inet_ntop(AF_INET, &packet->ipheader.src_addr, src_ip, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &packet->ipheader.dst_addr, dst_ip, INET_ADDRSTRLEN);
+    printf("\n-- ip header --\n"
+              "version: %d\n"
+              "ihl: %d\n"
+              "tos: %d\n"
+              "len: %d\n"
+              "id: %d\n"
+              "flags: %d\n"
+              "flag offset: %d\n"
+              "ttl: %d\n"
+              "proto: %d\n"
+              "checksum: %d\n"
+              "src_addr: %s\n"
+              "dst_addr: %s\n",
+              packet->ipheader.version, packet->ipheader.ihl,
+              packet->ipheader.tos, packet->ipheader.len, packet->ipheader.id,
+              packet->ipheader.flags, packet->ipheader.flag_offset,
+              packet->ipheader.ttl, packet->ipheader.proto,
+              packet->ipheader.checksum, src_ip, dst_ip);
+
+    printf("\n-- udp header --\n"
+              "src_port: %d\n"
+              "dst_port: %d\n"
+              "length: %d\n"
+              "checksum: %d\n",
+              packet->udpheader.src_port, packet->udpheader.dst_port,
+              packet->udpheader.lenght, packet->udpheader.checksum);
+    printf("payload: %s\n", packet->payload);
 }
