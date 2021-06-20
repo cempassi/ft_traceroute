@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 20:10:48 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 20:27:14 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static t_addrinfo *bind_src(t_traceroute *traceroute)
     host = NULL;
     ft_bzero(&hints, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_socktype = SOCK_RAW;
     hints.ai_flags = AI_PASSIVE;
     if ((error = getaddrinfo(NULL, DEFAULT_SRC_PORT, &hints, &host)))
     {
