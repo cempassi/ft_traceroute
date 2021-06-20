@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 17:07:01 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 18:31:40 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 20:23:03 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static size_t get_packet_size(t_traceroute *traceroute)
     return (packet_size);
 }
 
-static void init_ipheader(t_udppacket *packet, size_t packet_size)
+static void init_ipheader(t_udppacket *packet, size_t packet_size, t_addrinfo *dst)
 {
     packet->ipheader.version = 4;
     packet->ipheader.ihl = 5;
@@ -54,22 +54,22 @@ static void init_ipheader(t_udppacket *packet, size_t packet_size)
     packet->ipheader.id = 1;
     packet->ipheader.flags = 0;
     packet->ipheader.flag_offset = 0;
-    packet->ipheader.ttl = 0;
+    packet->ipheader.ttl = 1;
     packet->ipheader.proto = IPPROTO_UDP;
     packet->ipheader.checksum = 0;
-    packet->ipheader.src_addr = 8888;
-    packet->ipheader.dst_addr = 8888;
+    packet->ipheader.src_addr = INADDR_ANY;
+    packet->ipheader.dst_addr = ((struct sockaddr_in *)dst->ai_addr)->sin_addr.s_addr;
 }
 
-void init_udpheader(t_udppacket *packet)
+void init_udpheader(t_udppacket *packet, t_addrinfo *src, t_addrinfo *dst)
 {
-    packet->udpheader.src_port = 0;
-    packet->udpheader.dst_port = 0;
+    packet->udpheader.src_port = ((struct sockaddr_in *)src->ai_addr)->sin_port;
+    packet->udpheader.dst_port = ((struct sockaddr_in *)dst->ai_addr)->sin_port;
     packet->udpheader.checksum = 0;
-    packet->udpheader.lenght = 0;
+    packet->udpheader.lenght = UDP_HEADER_LEN + DEFAULT_PAYLOAD_LEN ;
 }
 
-t_udppacket *generate_packet(t_traceroute *traceroute)
+t_udppacket *generate_packet(t_traceroute *traceroute, t_addrinfo *src, t_addrinfo *dst)
 {
     t_udppacket *packet;
     size_t       packet_size;
@@ -81,8 +81,8 @@ t_udppacket *generate_packet(t_traceroute *traceroute)
         dprintf(2, "%s: packet allocation failed\n", traceroute->name);
         return (NULL);
     }
-    init_ipheader(packet, packet_size);
-    init_udpheader(packet);
+    init_ipheader(packet, packet_size, dst);
+    init_udpheader(packet, src, dst);
     generate_payload(traceroute, packet, packet_size - PACKET_HEADER_LEN);
     return (packet);
 }

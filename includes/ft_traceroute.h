@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 18:05:34 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 20:21:05 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 #define DEFAULT_HOPS 64
 #define DEFAULT_PAYLOAD "42"
 #define DEFAULT_PAYLOAD_LEN 50
+#define DEFAULT_SRC_PORT "3490"
+#define DEFAULT_DST_PORT "33434"
 
 #define OPT_H 0x0001
 #define OPT_V 0x0002
@@ -98,7 +100,7 @@ typedef struct s_traceroute
 
 int  init_prgm(t_traceroute *traceroute, int ac, char **av);
 
-t_udppacket *generate_packet(t_traceroute *traceroute);
+t_udppacket *generate_packet(t_traceroute *traceroute, t_addrinfo *dst, t_addrinfo *src);
 
 /*
 *****************************************************

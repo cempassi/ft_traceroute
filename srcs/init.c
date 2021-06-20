@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 18:31:23 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 20:17:22 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static 	int set_sockets_opt(t_traceroute *traceroute)
 		dprintf(2, "%s: SO_BROADCAST configuration failed\n", traceroute->name);
 		return (-1);
 	}
-    if(setsockopt(udp->fd, IPPROTO_IP, IP_HDRINCL, &one, sizeof(one)) < 0)
+    if(setsockopt(udp->fd, IPPROTO_IP, IP_HDRINCL, &one, sizeof(int)) < 0)
 	{
 		traceroute->exit = EX_OSERR;
 		dprintf(STDERR_FILENO, "%s: IPHDR configuration failed\n", traceroute->name);

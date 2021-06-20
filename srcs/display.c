@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:41:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 18:30:48 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 18:59:33 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void display_packet(t_udppacket *packet)
               "dst_port: %d\n"
               "length: %d\n"
               "checksum: %d\n",
-              packet->udpheader.src_port, packet->udpheader.dst_port,
+              ntohs(packet->udpheader.src_port), ntohs(packet->udpheader.dst_port),
               packet->udpheader.lenght, packet->udpheader.checksum);
     printf("payload: %s\n", packet->payload);
 }
