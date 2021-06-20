@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 14:52:44 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 17:06:06 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,14 +103,15 @@ static int 	parse_opt(t_traceroute *ping, t_opt *option, int ac, char **av)
 static void init_traceroute(t_traceroute *traceroute, t_opt *option, char **av)
 {
     ft_bzero(traceroute, sizeof(t_traceroute));
+    traceroute->name = av[0];
     traceroute->hops = DEFAULT_HOPS;
     traceroute->exit = 0;
-    traceroute->name = av[0];
+    traceroute->payload_size = DEFAULT_PAYLOAD_LEN;
+    traceroute->payload = DEFAULT_PAYLOAD;
     option->optstr = OPTSTR;
     option->first_arg = 1;
     option->optlong = NULL;
 }
-
 
 int init_prgm(t_traceroute *traceroute, int ac, char **av)
 {

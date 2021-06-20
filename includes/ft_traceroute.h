@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 14:26:35 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 17:08:08 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,53 @@
 #include <sys/types.h>
 
 #define OPTSTR "hv"
+
 #define DEFAULT_HOPS 64
+#define DEFAULT_PAYLOAD "42"
+#define DEFAULT_PAYLOAD_LEN 50
 
 #define OPT_H 0x0001
 #define OPT_V 0x0002
 
+#define MAX_PAYLOAD_SIZE 64
+#define UDP_HEADER_LEN 8
+#define IP_HEADER_LEN 20
+#define PACKET_HEADER_LEN UDP_HEADER_LEN + IP_HEADER_LEN
+#define TIME_DATA sizeof(t_time)
+
 typedef struct addrinfo t_addrinfo;
 typedef struct msghdr   t_msghdr;
+
+typedef struct s_ipheader
+{
+    uint8_t  version : 4;
+    uint8_t  ihl : 4;
+    uint8_t  tos;
+    uint16_t len;
+    uint16_t id;
+    uint16_t flags : 3;
+    uint16_t flag_offset : 13;
+    uint8_t  ttl;
+    uint8_t  proto;
+    uint16_t checksum;
+    uint32_t src_addr;
+    uint32_t dst_addr;
+} t_ipheader;
+
+typedef struct s_udpheader
+{
+    uint16_t src_port;
+    uint16_t dst_port;
+    uint16_t lenght;
+    uint16_t checksum;
+} t_udpheader;
+
+typedef struct __attribute__((packed)) t_udppacket
+{
+    t_ipheader  ipheader;
+    t_udpheader udpheader;
+    char        payload[];
+} t_udppacket;
 
 typedef struct s_socket
 {
@@ -43,22 +83,6 @@ typedef struct s_time
     struct timeval recv;
 } t_time;
 
-typedef struct s_iphdr
-{
-    uint8_t  version : 4;
-    uint8_t  ihl : 4;
-    uint8_t  tos;
-    uint16_t len;
-    uint16_t id;
-    uint16_t flags : 3;
-    uint16_t frag_offset : 13;
-    uint8_t  ttl;
-    uint8_t  proto;
-    uint16_t csum;
-    uint32_t saddr;
-    uint32_t daddr;
-} t_iphdr;
-
 typedef struct s_traceroute
 {
     t_socket udp;
@@ -68,9 +92,19 @@ typedef struct s_traceroute
     char     *host;
     char     *name;
     uint32_t options;
+    uint32_t payload_size;
+    char     *payload;
 } t_traceroute;
 
-void display_help(char *name);
 int  init_prgm(t_traceroute *traceroute, int ac, char **av);
 
+/*
+*****************************************************
+********************* DISPLAY ***********************
+*****************************************************
+*/
+
+void display_help(char *name);
+void display_start(t_traceroute *traceroute, struct addrinfo *host);
+t_udppacket *generate_packet(t_traceroute *traceroute);
 #endif
