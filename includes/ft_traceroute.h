@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 12:29:04 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 14:26:35 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ typedef struct s_iphdr
 
 typedef struct s_traceroute
 {
+    t_socket udp;
+    t_socket icmp;
     uint32_t hops;
     int16_t  exit;
     char     *host;

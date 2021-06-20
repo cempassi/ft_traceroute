@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 12:26:37 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 14:52:44 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,54 @@
 // 	return (check_arg(ping, convert));
 // }
 
+static 	int set_sockets_opt(t_traceroute *traceroute)
+{
+	t_socket 	   	*udp;
+	t_socket 	   	*icmp;
+	int 			broadcast;
+    int             one;
+
+    one = 1;
+	icmp = &traceroute->icmp;
+	udp = &traceroute->udp;
+	broadcast = 1;
+	if (setsockopt(icmp->fd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(int)))
+	{
+		traceroute->exit = EX_OSERR;
+		ft_dprintf(2, "%s: SO_BROADCAST configuration failed\n", traceroute->name);
+		return (-1);
+	}
+    if(setsockopt(udp->fd, IPPROTO_IP, IP_HDRINCL, &one, sizeof(one)) < 0)
+	{
+		traceroute->exit = EX_OSERR;
+		ft_dprintf(STDERR_FILENO, "%s: IPHDR configuration failed\n", traceroute->name);
+		return (-1);
+	}
+	return (0);
+}
+
+static int 	init_socket(t_traceroute *traceroute)
+{
+	t_socket *udp;
+	t_socket *icmp;
+
+	udp = &traceroute->udp;
+	icmp = &traceroute->icmp;
+	if ((udp->fd = socket(PF_INET, SOCK_RAW, IPPROTO_UDP)) < 0)
+	{
+		traceroute->exit = EX_OSERR;
+		ft_dprintf(STDERR_FILENO, "%s: Needs priviledged access\n", traceroute->name);
+		return (-1);
+	}
+	if ((icmp->fd = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
+	{
+		traceroute->exit = EX_OSERR;
+		ft_dprintf(STDERR_FILENO, "%s: Needs priviledged access\n", traceroute->name);
+		return (-1);
+	}
+	return (set_sockets_opt(traceroute) < 0 ? -1 : 0);
+}
+
 static int 	parse_opt(t_traceroute *ping, t_opt *option, int ac, char **av)
 {
 	char  o;
@@ -63,6 +111,7 @@ static void init_traceroute(t_traceroute *traceroute, t_opt *option, char **av)
     option->optlong = NULL;
 }
 
+
 int init_prgm(t_traceroute *traceroute, int ac, char **av)
 {
     t_opt option;
@@ -87,5 +136,5 @@ int init_prgm(t_traceroute *traceroute, int ac, char **av)
 	traceroute->host = av[ac - 1];
 	if (parse_opt(traceroute, &option, ac, av))
 		return (-1);
-    return (traceroute->exit);
+    return (init_socket(traceroute));
 }
