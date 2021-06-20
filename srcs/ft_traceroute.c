@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 20:27:14 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 20:36:55 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,7 @@ static struct addrinfo *resolve_dst(t_traceroute *traceroute)
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_RAW;
     hints.ai_flags = AI_ADDRCONFIG;
-    if ((error
-         = getaddrinfo(traceroute->host, DEFAULT_DST_PORT, &hints, &host)))
+    if ((error = getaddrinfo(traceroute->host, DEFAULT_DST_PORT, &hints, &host)))
     {
         traceroute->exit = EX_NOHOST;
         if (error == EAI_NONAME)
