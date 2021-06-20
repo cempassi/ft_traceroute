@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:41:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 18:59:33 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/20 20:48:51 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,9 @@ void display_help(char *name)
 void display_start(t_traceroute *traceroute, struct addrinfo *host)
 {
     char                host_ip[INET_ADDRSTRLEN];
-    int                 data;
     struct sockaddr_in *address;
 
     address = (struct sockaddr_in *)host->ai_addr;
-    data = traceroute->payload_size;
     inet_ntop(AF_INET, &address->sin_addr, host_ip, INET_ADDRSTRLEN);
     ft_printf("traceroute to %s (%s), %d max hops, %d bytes packets\n",
               traceroute->host, host_ip, traceroute->hops,
