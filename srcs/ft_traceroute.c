@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 14:24:16 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 15:27:49 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ static int send_packet(t_traceroute *traceroute, t_packet *packet,
 {
     int16_t send;
 
-    send = sendto(traceroute->udp.fd, packet, packet->ipheader.tot_len, 0,
+    printf("udphdr: %lu\n", sizeof(t_udpheader));
+    send = sendto(traceroute->udp.fd, &packet->udppacket.payload, packet->udppacket.udpheader.uh_ulen - 8, 0,
                   dst->ai_addr, dst->ai_addrlen);
     if (send < 0)
     {

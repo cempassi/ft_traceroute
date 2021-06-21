@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 20:17:22 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 15:30:59 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,18 @@ static 	int set_sockets_opt(t_traceroute *traceroute)
 	icmp = &traceroute->icmp;
 	udp = &traceroute->udp;
 	broadcast = 1;
-	if (setsockopt(icmp->fd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(int)))
+	if (setsockopt(udp->fd, IPPROTO_IP, IP_TTL, &one, sizeof(int)))
 	{
 		traceroute->exit = EX_OSERR;
-		dprintf(2, "%s: SO_BROADCAST configuration failed\n", traceroute->name);
+		ft_dprintf(STDERR_FILENO, "%s: ttl configuration failed\n", traceroute->name);
 		return (-1);
 	}
-    if(setsockopt(udp->fd, IPPROTO_IP, IP_HDRINCL, &one, sizeof(int)) < 0)
-	{
-		traceroute->exit = EX_OSERR;
-		dprintf(STDERR_FILENO, "%s: IPHDR configuration failed\n", traceroute->name);
-		return (-1);
-	}
+    // if(setsockopt(udp->fd, IPPROTO_IP, IP_HDRINCL, &one, sizeof(int)) < 0)
+	// {
+	// 	traceroute->exit = EX_OSERR;
+	// 	dprintf(STDERR_FILENO, "%s: IPHDR configuration failed\n", traceroute->name);
+	// 	return (-1);
+	//}
 	return (0);
 }
 
@@ -70,7 +70,7 @@ static int 	init_socket(t_traceroute *traceroute)
 
 	udp = &traceroute->udp;
 	icmp = &traceroute->icmp;
-	if ((udp->fd = socket(PF_INET, SOCK_RAW, IPPROTO_UDP)) < 0)
+	if ((udp->fd = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
 	{
 		traceroute->exit = EX_OSERR;
 		ft_dprintf(STDERR_FILENO, "%s: Needs priviledged access\n", traceroute->name);
