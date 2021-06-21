@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 16:02:24 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 16:12:11 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,22 @@ static struct addrinfo *resolve_dst(t_traceroute *traceroute)
     return (host);
 }
 
+static 	int set_ttl(int socket, int ttl)
+{
+	if (setsockopt(socket, IPPROTO_IP, IP_TTL, &ttl, sizeof(int)))
+	{
+		return (-1);
+	}
+	return (0);
+}
+
 static int send_packet(t_traceroute *traceroute, t_addrinfo *dst)
 {
     int16_t send;
     char    *payload;
 
     payload = generate_payload(traceroute);
+    set_ttl(traceroute->udp.fd, 1);
     send = sendto(traceroute->udp.fd, payload, traceroute->payload_size, 0,
                   dst->ai_addr, dst->ai_addrlen);
     if (send < 0)

@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 16:08:13 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 16:16:10 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,22 +37,6 @@
 // 	return (check_arg(ping, convert));
 // }
 
-static 	int set_sockets_opt(t_traceroute *traceroute)
-{
-	t_socket 	   	*udp;
-    int             one;
-
-    one = 1;
-	udp = &traceroute->udp;
-	if (setsockopt(udp->fd, IPPROTO_IP, IP_TTL, &one, sizeof(int)))
-	{
-		traceroute->exit = EX_OSERR;
-		ft_dprintf(STDERR_FILENO, "%s: ttl configuration failed\n", traceroute->name);
-		return (-1);
-	}
-	return (0);
-}
-
 static int 	init_socket(t_traceroute *traceroute)
 {
 	t_socket *udp;
@@ -72,7 +56,7 @@ static int 	init_socket(t_traceroute *traceroute)
 		ft_dprintf(STDERR_FILENO, "%s: Needs priviledged access\n", traceroute->name);
 		return (-1);
 	}
-	return (set_sockets_opt(traceroute) < 0 ? -1 : 0);
+	return (0);
 }
 
 static int 	parse_opt(t_traceroute *ping, t_opt *option, int ac, char **av)
