@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:41:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 11:36:37 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 14:18:55 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void display_ipheader(t_ipheader *ipheader)
            "dst_addr: %s\n",
            ipheader->version, ipheader->ihl,
            ipheader->tos, ipheader->tot_len,
-           ipheader->id, ipheader->flag_off,
+           ipheader->id, ipheader->frag_off,
            ipheader->ttl, ipheader->protocol,
            ipheader->check, src_ip, dst_ip);
 }
@@ -100,7 +100,7 @@ void display_packet(t_packet *packet)
            "dst_addr: %s\n",
            packet->ipheader.version, packet->ipheader.ihl,
            packet->ipheader.tos, packet->ipheader.tot_len,
-           packet->ipheader.id, packet->ipheader.flag_off,
+           packet->ipheader.id, packet->ipheader.frag_off,
            packet->ipheader.ttl, packet->ipheader.protocol,
            packet->ipheader.check, src_ip, dst_ip);
 

@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 11:34:15 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 14:18:05 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,15 @@ typedef struct s_ipheader
 #else
 #error "Please fix <bits/endian.h>"
 #endif
-    u_int8_t       tos;
-    u_int16_t      tot_len;
-    u_int16_t      id;
-    u_int16_t      flag_off;
-    u_int8_t       ttl;
-    u_int8_t       protocol;
-    u_int16_t      check;
-    struct in_addr saddr;
-    struct in_addr daddr;
+    uint8_t       tos;
+    uint16_t      tot_len;
+    uint16_t      id;
+    uint16_t      frag_off;
+    uint8_t       ttl;
+    uint8_t       protocol;
+    uint16_t      check;
+    uint32_t saddr;
+    uint32_t daddr;
     /*The options start here. */
 } t_ipheader;
 

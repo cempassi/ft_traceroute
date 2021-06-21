@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 17:07:01 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 12:03:21 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 14:18:35 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,12 @@ static void init_ipheader(t_packet *packet, size_t packet_size,
     packet->ipheader.tos = 16;
     packet->ipheader.tot_len = packet_size;
     packet->ipheader.id = 0;
-    packet->ipheader.flag_off = 0;
+    packet->ipheader.frag_off = 0;
     packet->ipheader.ttl = 1;
     packet->ipheader.protocol = IPPROTO_UDP;
     packet->ipheader.check = 0;
-    packet->ipheader.saddr = ((struct sockaddr_in *)src->ai_addr)->sin_addr;
-    packet->ipheader.daddr = ((struct sockaddr_in *)dst->ai_addr)->sin_addr;
+    packet->ipheader.saddr = ((struct sockaddr_in *)src->ai_addr)->sin_addr.s_addr;
+    packet->ipheader.daddr = ((struct sockaddr_in *)dst->ai_addr)->sin_addr.s_addr;
 }
 
 void init_udpheader(t_packet *packet, t_addrinfo *src, t_addrinfo *dst)
