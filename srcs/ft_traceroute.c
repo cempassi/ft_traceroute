@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 11:34:31 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 11:47:14 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static struct addrinfo *resolve_dst(t_traceroute *traceroute)
     host = NULL;
     ft_bzero(&hints, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_RAW;
+    hints.ai_socktype = 0;
     hints.ai_flags = AI_ADDRCONFIG | AI_V4MAPPED;
     if ((error = getaddrinfo(traceroute->host, NULL, &hints, &host)))
     {
@@ -51,7 +51,7 @@ static t_addrinfo *bind_src(t_traceroute *traceroute)
     host = NULL;
     ft_bzero(&hints, sizeof(struct addrinfo));
     hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_RAW;
+    hints.ai_socktype = 0;
     hints.ai_flags = AI_PASSIVE;
     if ((error = getaddrinfo(NULL, "3490", &hints, &host)))
     {
