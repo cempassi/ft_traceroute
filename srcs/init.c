@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 15:30:59 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 16:08:13 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,16 @@
 static 	int set_sockets_opt(t_traceroute *traceroute)
 {
 	t_socket 	   	*udp;
-	t_socket 	   	*icmp;
-	int 			broadcast;
     int             one;
 
     one = 1;
-	icmp = &traceroute->icmp;
 	udp = &traceroute->udp;
-	broadcast = 1;
 	if (setsockopt(udp->fd, IPPROTO_IP, IP_TTL, &one, sizeof(int)))
 	{
 		traceroute->exit = EX_OSERR;
 		ft_dprintf(STDERR_FILENO, "%s: ttl configuration failed\n", traceroute->name);
 		return (-1);
 	}
-    // if(setsockopt(udp->fd, IPPROTO_IP, IP_HDRINCL, &one, sizeof(int)) < 0)
-	// {
-	// 	traceroute->exit = EX_OSERR;
-	// 	dprintf(STDERR_FILENO, "%s: IPHDR configuration failed\n", traceroute->name);
-	// 	return (-1);
-	//}
 	return (0);
 }
 
