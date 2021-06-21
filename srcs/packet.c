@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 17:07:01 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 11:27:14 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 12:03:21 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static void init_ipheader(t_packet *packet, size_t packet_size,
     packet->ipheader.ihl = 5;
     packet->ipheader.tos = 16;
     packet->ipheader.tot_len = packet_size;
-    packet->ipheader.id = 1;
+    packet->ipheader.id = 0;
     packet->ipheader.flag_off = 0;
     packet->ipheader.ttl = 1;
     packet->ipheader.protocol = IPPROTO_UDP;
