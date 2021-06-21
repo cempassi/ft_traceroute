@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 11:47:14 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 12:15:04 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ int main(int ac, char **av)
     if (ac == 1)
     {
         display_help(av[0]);
+        return (-1);
     }
     if (init_prgm(&traceroute, ac, av))
     {
