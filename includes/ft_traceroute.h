@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 20:21:05 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 11:34:15 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <netdb.h>
 #include <netinet/ip.h>
 #include <netinet/ip_icmp.h>
+#include <netinet/udp.h>
 #include <stdint.h>
 #include <sys/socket.h>
 #include <sys/time.h>
@@ -40,37 +41,42 @@
 
 typedef struct addrinfo t_addrinfo;
 typedef struct msghdr   t_msghdr;
+typedef struct udphdr   t_udpheader;
 
 typedef struct s_ipheader
 {
-    uint8_t  version : 4;
-    uint8_t  ihl : 4;
-    uint8_t  tos;
-    uint16_t len;
-    uint16_t id;
-    uint16_t flags : 3;
-    uint16_t flag_offset : 13;
-    uint8_t  ttl;
-    uint8_t  proto;
-    uint16_t checksum;
-    uint32_t src_addr;
-    uint32_t dst_addr;
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+    unsigned int ihl : 4;
+    unsigned int version : 4;
+#elif __BYTE_ORDER == __BIG_ENDIAN
+    unsigned int version : 4;
+    unsigned int ihl : 4;
+#else
+#error "Please fix <bits/endian.h>"
+#endif
+    u_int8_t       tos;
+    u_int16_t      tot_len;
+    u_int16_t      id;
+    u_int16_t      flag_off;
+    u_int8_t       ttl;
+    u_int8_t       protocol;
+    u_int16_t      check;
+    struct in_addr saddr;
+    struct in_addr daddr;
+    /*The options start here. */
 } t_ipheader;
-
-typedef struct s_udpheader
-{
-    uint16_t src_port;
-    uint16_t dst_port;
-    uint16_t lenght;
-    uint16_t checksum;
-} t_udpheader;
 
 typedef struct __attribute__((packed)) t_udppacket
 {
-    t_ipheader  ipheader;
     t_udpheader udpheader;
     char        payload[];
 } t_udppacket;
+
+typedef struct __attribute__((packed)) s_packet
+{
+    t_ipheader  ipheader;
+    t_udppacket udppacket;
+} t_packet;
 
 typedef struct s_socket
 {
@@ -91,16 +97,17 @@ typedef struct s_traceroute
     t_socket icmp;
     uint32_t hops;
     int16_t  exit;
-    char     *host;
-    char     *name;
+    char *   host;
+    char *   name;
     uint32_t options;
     uint32_t payload_size;
-    char     *payload;
+    char *   payload;
 } t_traceroute;
 
-int  init_prgm(t_traceroute *traceroute, int ac, char **av);
+int init_prgm(t_traceroute *traceroute, int ac, char **av);
 
-t_udppacket *generate_packet(t_traceroute *traceroute, t_addrinfo *dst, t_addrinfo *src);
+t_packet *generate_packet(t_traceroute *traceroute, t_addrinfo *dst,
+                          t_addrinfo *src);
 
 /*
 *****************************************************
@@ -110,6 +117,6 @@ t_udppacket *generate_packet(t_traceroute *traceroute, t_addrinfo *dst, t_addrin
 
 void display_help(char *name);
 void display_start(t_traceroute *traceroute, struct addrinfo *host);
-void display_packet(t_udppacket *packet);
+void display_packet(t_packet *packet);
 
 #endif

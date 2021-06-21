@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/20 21:29:24 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 11:34:31 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,12 @@ static t_addrinfo *bind_src(t_traceroute *traceroute)
     return (host);
 }
 
-static int send_packet(t_traceroute *traceroute, t_udppacket *packet,
+static int send_packet(t_traceroute *traceroute, t_packet *packet,
                        t_addrinfo *dst)
 {
     int16_t send;
 
-    send = sendto(traceroute->udp.fd, packet, packet->ipheader.len, 0,
+    send = sendto(traceroute->udp.fd, packet, packet->ipheader.tot_len, 0,
                   dst->ai_addr, dst->ai_addrlen);
     if (send < 0)
     {
@@ -86,7 +86,7 @@ static int send_packet(t_traceroute *traceroute, t_udppacket *packet,
 static int traceroute_loop(t_traceroute *traceroute, t_addrinfo *src,
                            t_addrinfo *dst)
 {
-    t_udppacket *packet;
+    t_packet *packet;
 
     if ((packet = generate_packet(traceroute, src, dst)) == NULL)
     {
