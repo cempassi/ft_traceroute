@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 17:07:01 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 14:18:35 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 14:32:46 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,25 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <sysexits.h>
+
+uint16_t 	checksum(void *addr, int count)
+{
+	uint32_t  sum;
+	uint16_t *ptr;
+
+	sum = 0;
+	ptr = addr;
+	while (count > 1)
+	{
+		sum += *ptr++;
+		count -= 2;
+	}
+	if (count > 0)
+		sum += *(uint8_t *)ptr;
+	while (sum >> 16)
+		sum = (sum & 0xFFFF) + (sum >> 16);
+	return ~sum;
+}
 
 static void generate_payload(const t_traceroute *traceroute,
                              t_packet *packet, size_t size)
@@ -85,5 +104,7 @@ t_packet *generate_packet(t_traceroute *traceroute, t_addrinfo *src,
     init_ipheader(packet, packet_size, src, dst);
     init_udpheader(packet, src, dst);
     generate_payload(traceroute, packet, packet_size - PACKET_HEADER_LEN);
+    packet->udppacket.udpheader.uh_sum = checksum(&packet->udppacket, packet->udppacket.udpheader.uh_ulen);
+    packet->ipheader.check = checksum(packet, packet->ipheader.tot_len);
     return (packet);
 }
