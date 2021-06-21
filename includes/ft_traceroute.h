@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 15:27:53 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 16:01:58 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,7 @@ typedef struct s_traceroute
 } t_traceroute;
 
 int init_prgm(t_traceroute *traceroute, int ac, char **av);
-
-t_packet *generate_packet(t_traceroute *traceroute, t_addrinfo *dst,
-                          t_addrinfo *src);
+char *generate_payload(t_traceroute *traceroute);
 
 /*
 *****************************************************

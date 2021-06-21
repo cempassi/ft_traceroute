@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 15:27:49 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 16:02:24 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,38 +42,13 @@ static struct addrinfo *resolve_dst(t_traceroute *traceroute)
     return (host);
 }
 
-static t_addrinfo *bind_src(t_traceroute *traceroute)
-{
-    struct addrinfo *host;
-    struct addrinfo  hints;
-    int              error;
-
-    host = NULL;
-    ft_bzero(&hints, sizeof(struct addrinfo));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = 0;
-    hints.ai_flags = AI_PASSIVE;
-    if ((error = getaddrinfo(NULL, "3490", &hints, &host)))
-    {
-        traceroute->exit = EX_NOHOST;
-        if (error == EAI_NONAME)
-            dprintf(STDERR_FILENO, "%s: cannot resolve %s: host unknown\n",
-                    traceroute->name, traceroute->host);
-        else
-            dprintf(STDERR_FILENO, "%s: failed to reach host\n",
-                    traceroute->name);
-        return (NULL);
-    }
-    return (host);
-}
-
-static int send_packet(t_traceroute *traceroute, t_packet *packet,
-                       t_addrinfo *dst)
+static int send_packet(t_traceroute *traceroute, t_addrinfo *dst)
 {
     int16_t send;
+    char    *payload;
 
-    printf("udphdr: %lu\n", sizeof(t_udpheader));
-    send = sendto(traceroute->udp.fd, &packet->udppacket.payload, packet->udppacket.udpheader.uh_ulen - 8, 0,
+    payload = generate_payload(traceroute);
+    send = sendto(traceroute->udp.fd, payload, traceroute->payload_size, 0,
                   dst->ai_addr, dst->ai_addrlen);
     if (send < 0)
     {
@@ -84,17 +59,9 @@ static int send_packet(t_traceroute *traceroute, t_packet *packet,
     return (0);
 }
 
-static int traceroute_loop(t_traceroute *traceroute, t_addrinfo *src,
-                           t_addrinfo *dst)
+static int traceroute_loop(t_traceroute *traceroute, t_addrinfo *dst)
 {
-    t_packet *packet;
-
-    if ((packet = generate_packet(traceroute, src, dst)) == NULL)
-    {
-        return (-1);
-    }
-    display_packet(packet);
-    send_packet(traceroute, packet, dst);
+    send_packet(traceroute, dst);
     // ft_memdel((void **)&packet);
     return (0);
 }
@@ -102,20 +69,14 @@ static int traceroute_loop(t_traceroute *traceroute, t_addrinfo *src,
 static int run_traceroute(t_traceroute *traceroute)
 {
     t_addrinfo *dst;
-    t_addrinfo *src;
 
     if ((dst = resolve_dst(traceroute)) == NULL)
     {
         return (-1);
     }
-    if ((src = bind_src(traceroute)) == NULL)
-    {
-        return (-1);
-    }
     display_start(traceroute, dst);
-    traceroute_loop(traceroute, src, dst);
+    traceroute_loop(traceroute, dst);
     // display_stats(ping);
-    freeaddrinfo(src);
     freeaddrinfo(dst);
     return (0);
 }

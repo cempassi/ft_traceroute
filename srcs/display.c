@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:41:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 14:18:55 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/21 16:06:08 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,32 +39,6 @@ void display_start(t_traceroute *traceroute, struct addrinfo *host)
     ft_printf("traceroute to %s (%s), %d max hops, %d bytes packets\n",
               traceroute->host, host_ip, traceroute->hops,
               traceroute->payload_size + sizeof(t_udppacket));
-}
-
-void display_ipheader(t_ipheader *ipheader)
-{
-    char src_ip[INET_ADDRSTRLEN];
-    char dst_ip[INET_ADDRSTRLEN];
-
-    inet_ntop(AF_INET, &ipheader->saddr, src_ip, INET_ADDRSTRLEN);
-    inet_ntop(AF_INET, &ipheader->daddr, dst_ip, INET_ADDRSTRLEN);
-    printf("\n-- ip header --\n"
-           "version: %d\n"
-           "ihl: %d\n"
-           "tos: %d\n"
-           "len: %d\n"
-           "id: %d\n"
-           "flag offset: %d\n"
-           "ttl: %d\n"
-           "proto: %d\n"
-           "checksum: %d\n"
-           "src_addr: %s\n"
-           "dst_addr: %s\n",
-           ipheader->version, ipheader->ihl,
-           ipheader->tos, ipheader->tot_len,
-           ipheader->id, ipheader->frag_off,
-           ipheader->ttl, ipheader->protocol,
-           ipheader->check, src_ip, dst_ip);
 }
 
 void display_udppacket(t_udppacket *packet)
@@ -104,12 +78,6 @@ void display_packet(t_packet *packet)
            packet->ipheader.ttl, packet->ipheader.protocol,
            packet->ipheader.check, src_ip, dst_ip);
 
-    printf("\n-- udp header --\n"
-           "src_port: %d\n"
-           "dst_port: %d\n"
-           "length: %d\n"
-           "checksum: %d\n",
-           ntohs(packet->udppacket.udpheader.uh_sport), ntohs(packet->udppacket.udpheader.uh_dport),
-           packet->udppacket.udpheader.uh_ulen, packet->udppacket.udpheader.uh_sum);
+    display_udppacket(&packet->udppacket);
     printf("payload: %s\n", packet->udppacket.payload);
 }
