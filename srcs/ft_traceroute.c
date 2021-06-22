@@ -6,15 +6,12 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 16:12:11 by cempassi         ###   ########.fr       */
-/*                                                                            */
+/*   Updated: 2021/06/22 10:18:08 by cempassi         ###   ########.fr       */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
-#include <arpa/inet.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <sys/socket.h>
 #include <sysexits.h>
 
 static struct addrinfo *resolve_dst(t_traceroute *traceroute)
@@ -42,37 +39,46 @@ static struct addrinfo *resolve_dst(t_traceroute *traceroute)
     return (host);
 }
 
-static 	int set_ttl(int socket, int ttl)
+static int set_ttl(int socket, int ttl)
 {
-	if (setsockopt(socket, IPPROTO_IP, IP_TTL, &ttl, sizeof(int)))
-	{
-		return (-1);
-	}
-	return (0);
+    if (setsockopt(socket, IPPROTO_IP, IP_TTL, &ttl, sizeof(int)))
+    {
+        return (-1);
+    }
+    return (0);
 }
 
-static int send_packet(t_traceroute *traceroute, t_addrinfo *dst)
+static int send_packet(t_traceroute *traceroute, char *payload, t_addrinfo *dst)
 {
     int16_t send;
-    char    *payload;
 
-    payload = generate_payload(traceroute);
-    set_ttl(traceroute->udp.fd, 1);
     send = sendto(traceroute->udp.fd, payload, traceroute->payload_size, 0,
                   dst->ai_addr, dst->ai_addrlen);
     if (send < 0)
     {
-        dprintf(STDERR_FILENO, "%s: failed to send packet\n",
-                traceroute->name);
+        dprintf(STDERR_FILENO, "%s: failed to send packet\n", traceroute->name);
     }
     printf("Packet sent...\n");
     return (0);
 }
 
+
+
 static int traceroute_loop(t_traceroute *traceroute, t_addrinfo *dst)
 {
-    send_packet(traceroute, dst);
-    // ft_memdel((void **)&packet);
+    char             *payload;
+    uint32_t         step;
+    struct timeval   time;
+
+    payload = generate_payload(traceroute);
+    step = 1;
+    time.tv_sec = traceroute->timeout;
+    time.tv_usec = 0;
+    while (step < traceroute->hops)
+    {
+        set_ttl(traceroute->udp.fd, step);
+    }
+    send_packet(traceroute, payload, dst);
     return (0);
 }
 

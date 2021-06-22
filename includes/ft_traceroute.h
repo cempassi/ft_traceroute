@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 16:01:58 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 10:20:27 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 #include "libft.h"
 #include <netdb.h>
 #include <netinet/ip.h>
+#include <arpa/inet.h>
 #include <netinet/ip_icmp.h>
 #include <netinet/udp.h>
 #include <stdint.h>
+#include <sys/_types/_timeval.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -25,6 +27,8 @@
 #define OPTSTR "hv"
 
 #define DEFAULT_HOPS 64
+#define DEFAULT_TIMEOUT 5
+#define DEFAULT_PROBES 3
 #define DEFAULT_PAYLOAD "42"
 #define DEFAULT_PAYLOAD_LEN 50
 #define DEFAULT_SRC_PORT "3490"
@@ -61,8 +65,8 @@ typedef struct s_ipheader
     uint8_t       ttl;
     uint8_t       protocol;
     uint16_t      check;
-    uint32_t saddr;
-    uint32_t daddr;
+    uint32_t      saddr;
+    uint32_t      daddr;
     /*The options start here. */
 } t_ipheader;
 
@@ -96,6 +100,8 @@ typedef struct s_traceroute
     t_socket udp;
     t_socket icmp;
     uint32_t hops;
+    uint32_t timeout;
+    uint8_t  probes;
     int16_t  exit;
     char *   host;
     char *   name;

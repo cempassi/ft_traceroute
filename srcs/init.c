@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 16:16:10 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 10:20:41 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ static void init_traceroute(t_traceroute *traceroute, t_opt *option, char **av)
     ft_bzero(traceroute, sizeof(t_traceroute));
     traceroute->name = av[0];
     traceroute->hops = DEFAULT_HOPS;
+    traceroute->timeout = DEFAULT_TIMEOUT;
+    traceroute->probes = DEFAULT_PROBES;
     traceroute->exit = 0;
     traceroute->payload_size = DEFAULT_PAYLOAD_LEN;
     traceroute->payload = DEFAULT_PAYLOAD;
