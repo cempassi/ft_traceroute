@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 15:02:55 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 16:27:51 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 19:55:57 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,9 @@
 
 static int check_arg(t_traceroute *traceroute, int64_t number)
 {
-    int e;
-
-    e = 0;
     if (traceroute->hops > MAX_TTL)
     {
-        e = ft_dprintf(2, "%s: %s `%d`\n", traceroute->name, OPT_M_E_STR,
+        ft_dprintf(2, "%s: %s `%d`\n", traceroute->name, OPT_M_E_STR,
                        number);
     }
     return (traceroute->exit == EX_USAGE ? -1 : number);
