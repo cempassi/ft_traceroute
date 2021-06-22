@@ -6,13 +6,12 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 19:42:54 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 19:52:35 by cempassi         ###   ########.fr       */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 #include "memory.h"
 #include <stdio.h>
-#include <sys/_select.h>
 #include <sys/socket.h>
 #include <sysexits.h>
 
