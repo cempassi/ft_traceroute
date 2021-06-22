@@ -6,7 +6,7 @@
 #    By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/22 04:47:46 by cempassi          #+#    #+#              #
-#    Updated: 2021/06/20 20:59:55 by cempassi         ###   ########.fr        #
+#    Updated: 2021/06/22 15:08:44 by cempassi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,6 +54,7 @@ SRCM += ft_traceroute.c
 SRCS += display.c
 SRCS += init.c
 SRCS += packet.c
+SRCS += options.c
 
 #Debug Files
 DSYM += $(NAME).dSYM

@@ -6,36 +6,47 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 10:20:27 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 15:08:23 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_TRACEROUTE_H
 #define FT_TRACEROUTE_H
-#include "libft.h"
 #include <netdb.h>
 #include <netinet/ip.h>
 #include <arpa/inet.h>
 #include <netinet/ip_icmp.h>
 #include <netinet/udp.h>
 #include <stdint.h>
+#include <sys/_types/_fd_def.h>
 #include <sys/_types/_timeval.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/select.h>
+#include "libft.h"
 
-#define OPTSTR "hv"
+#define OPTSTR "hm:v"
 
-#define DEFAULT_HOPS 64
+#define OPT_H 0x0001
+#define OPT_V 0x0002
+#define OPT_M 0x0004
+
+#define OPT_C_ERROR "-q [NUMBER]"
+#define OPT_C_E_STR "invalid number of probes: "
+#define OPT_M_ERROR "-m [NUMBER]"
+#define OPT_M_E_STR "Invalid max TTL: "
+#define OPT_S_ERROR "-s [NUMBER]"
+#define OPT_S_E_STR "wrong total length, 88 instead of"
+
+#define DEFAULT_HOPS 1
 #define DEFAULT_TIMEOUT 5
-#define DEFAULT_PROBES 3
+#define DEFAULT_PROBES 1
 #define DEFAULT_PAYLOAD "42"
 #define DEFAULT_PAYLOAD_LEN 50
 #define DEFAULT_SRC_PORT "3490"
 #define DEFAULT_DST_PORT "33434"
 
-#define OPT_H 0x0001
-#define OPT_V 0x0002
 
 #define MAX_PAYLOAD_SIZE 64
 #define UDP_HEADER_LEN 8
@@ -70,17 +81,31 @@ typedef struct s_ipheader
     /*The options start here. */
 } t_ipheader;
 
-typedef struct __attribute__((packed)) t_udppacket
+typedef struct s_icmpheader {
+    uint8_t     type;
+    uint8_t     code;
+    uint16_t    checksum;
+    uint32_t    data;
+} t_icmpheader;
+
+typedef struct __attribute__((packed)) s_udppacket
 {
-    t_udpheader udpheader;
+    t_udpheader header;
     char        payload[];
 } t_udppacket;
 
-typedef struct __attribute__((packed)) s_packet
+typedef struct __attribute__((packed)) s_ippacket
 {
-    t_ipheader  ipheader;
+    t_ipheader  header;
     t_udppacket udppacket;
-} t_packet;
+} t_ippacket;
+
+typedef struct s_icmppacket
+{
+    t_ipheader   ipheader;
+    t_icmpheader header;
+    t_ippacket   ippacket;
+} t_icmppacket;
 
 typedef struct s_socket
 {
@@ -97,20 +122,21 @@ typedef struct s_time
 
 typedef struct s_traceroute
 {
-    t_socket udp;
-    t_socket icmp;
+    int      udp;
+    int      icmp;
     uint32_t hops;
     uint32_t timeout;
     uint8_t  probes;
     int16_t  exit;
-    char *   host;
-    char *   name;
+    char     *host;
+    char     *name;
     uint32_t options;
     uint32_t payload_size;
-    char *   payload;
+    char     *payload;
 } t_traceroute;
 
 int init_prgm(t_traceroute *traceroute, int ac, char **av);
+int init_option(t_traceroute *traceroute, int ac, char **av);
 char *generate_payload(t_traceroute *traceroute);
 
 /*
@@ -121,6 +147,6 @@ char *generate_payload(t_traceroute *traceroute);
 
 void display_help(char *name);
 void display_start(t_traceroute *traceroute, struct addrinfo *host);
-void display_packet(t_packet *packet);
+void display_icmppacket(t_icmppacket *packet);
 
 #endif

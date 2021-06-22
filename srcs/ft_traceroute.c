@@ -6,12 +6,14 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 10:18:08 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 12:10:59 by cempassi         ###   ########.fr       */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
-#include <stdint.h>
+#include "memory.h"
 #include <stdio.h>
+#include <sys/_select.h>
+#include <sys/socket.h>
 #include <sysexits.h>
 
 static struct addrinfo *resolve_dst(t_traceroute *traceroute)
@@ -48,37 +50,94 @@ static int set_ttl(int socket, int ttl)
     return (0);
 }
 
-static int send_packet(t_traceroute *traceroute, char *payload, t_addrinfo *dst)
+static int send_packets(t_traceroute *traceroute, char *payload,
+                        t_addrinfo *dst)
 {
     int16_t send;
+    uint8_t sent;
 
-    send = sendto(traceroute->udp.fd, payload, traceroute->payload_size, 0,
-                  dst->ai_addr, dst->ai_addrlen);
-    if (send < 0)
+    sent = 0;
+    while (sent < traceroute->probes)
     {
-        dprintf(STDERR_FILENO, "%s: failed to send packet\n", traceroute->name);
+        send = sendto(traceroute->udp, payload, traceroute->payload_size, 0,
+                      dst->ai_addr, dst->ai_addrlen);
+        if (send < 0)
+        {
+            dprintf(STDERR_FILENO, "%s: failed to send packet\n",
+                    traceroute->name);
+        }
+        printf("Packet sent...\n");
+        sent++;
     }
-    printf("Packet sent...\n");
     return (0);
 }
 
+static int recv_packet(t_traceroute *traceroute)
+{
+    char            buffer[512];
+    int             result;
+    struct sockaddr address;
+    socklen_t       address_len;
 
+    ft_bzero(buffer, 512);
+    result = recvfrom(traceroute->icmp, buffer, 512, MSG_DONTWAIT, &address,
+                      &address_len);
+    if (result < 0)
+    {
+        dprintf(STDERR_FILENO, "%s: failed to recv packet\n", traceroute->name);
+    }
+    display_icmppacket((t_icmppacket *)buffer);
+    return (0);
+}
+
+static int select_packets(t_traceroute *traceroute)
+{
+    struct timeval timeout;
+    uint8_t        probe;
+    int            result;
+    fd_set         set;
+
+    probe = 0;
+    result = 0;
+    FD_ZERO(&set);
+    FD_SET(traceroute->icmp, &set);
+    while (probe++ < traceroute->probes)
+    {
+        timeout.tv_sec = traceroute->timeout;
+        timeout.tv_usec = 0;
+        result = select(traceroute->icmp + 1, &set, NULL, NULL, &timeout);
+        if (result < 0)
+        {
+            dprintf(STDERR_FILENO, "%s: select failed\n", traceroute->name);
+            return (-1);
+        }
+        else if (result == 0)
+        {
+            printf(" * ");
+            continue;
+        }
+        else if (recv_packet(traceroute) < 0)
+        {
+            return (-1);
+        }
+    }
+    return (0);
+}
 
 static int traceroute_loop(t_traceroute *traceroute, t_addrinfo *dst)
 {
-    char             *payload;
-    uint32_t         step;
-    struct timeval   time;
+    char *   payload;
+    uint32_t step;
 
     payload = generate_payload(traceroute);
     step = 1;
-    time.tv_sec = traceroute->timeout;
-    time.tv_usec = 0;
-    while (step < traceroute->hops)
+    while (step <= traceroute->hops)
     {
-        set_ttl(traceroute->udp.fd, step);
+        set_ttl(traceroute->udp, step);
+        send_packets(traceroute, payload, dst);
+        select_packets(traceroute);
+        step++;
     }
-    send_packet(traceroute, payload, dst);
     return (0);
 }
 

@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:41:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/21 16:06:08 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 12:26:40 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,18 +48,18 @@ void display_udppacket(t_udppacket *packet)
            "dst_port: %d\n"
            "length: %d\n"
            "checksum: %d\n",
-           ntohs(packet->udpheader.uh_sport), ntohs(packet->udpheader.uh_dport),
-           packet->udpheader.uh_ulen, packet->udpheader.uh_sum);
+           ntohs(packet->header.uh_sport), ntohs(packet->header.uh_dport),
+           packet->header.uh_ulen, packet->header.uh_sum);
     printf("payload: %s\n", packet->payload);
 }
 
-void display_packet(t_packet *packet)
+void display_ippacket(t_ippacket *packet)
 {
     char src_ip[INET_ADDRSTRLEN];
     char dst_ip[INET_ADDRSTRLEN];
 
-    inet_ntop(AF_INET, &packet->ipheader.saddr, src_ip, INET_ADDRSTRLEN);
-    inet_ntop(AF_INET, &packet->ipheader.daddr, dst_ip, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &packet->header.saddr, src_ip, INET_ADDRSTRLEN);
+    inet_ntop(AF_INET, &packet->header.daddr, dst_ip, INET_ADDRSTRLEN);
     printf("\n-- ip header --\n"
            "version: %d\n"
            "ihl: %d\n"
@@ -72,12 +72,24 @@ void display_packet(t_packet *packet)
            "checksum: %d\n"
            "src_addr: %s\n"
            "dst_addr: %s\n",
-           packet->ipheader.version, packet->ipheader.ihl,
-           packet->ipheader.tos, packet->ipheader.tot_len,
-           packet->ipheader.id, packet->ipheader.frag_off,
-           packet->ipheader.ttl, packet->ipheader.protocol,
-           packet->ipheader.check, src_ip, dst_ip);
+           packet->header.version, packet->header.ihl,
+           packet->header.tos, packet->header.tot_len,
+           packet->header.id, packet->header.frag_off,
+           packet->header.ttl, packet->header.protocol,
+           packet->header.check, src_ip, dst_ip);
+}
 
-    display_udppacket(&packet->udppacket);
-    printf("payload: %s\n", packet->udppacket.payload);
+void display_icmppacket(t_icmppacket *packet)
+{
+    printf("\n-- icmp header --\n"
+            "type: %d\n"
+            "code: %d\n"
+            "checksum: %d\n"
+            "data: %d\n",
+            packet->header.type,
+            packet->header.code,
+            packet->header.checksum,
+            packet->header.data);
+    display_ippacket(&packet->ippacket);
+    display_udppacket(&packet->ippacket.udppacket);
 }
