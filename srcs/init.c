@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 15:07:33 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 15:46:55 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,12 @@ static void init_traceroute(t_traceroute *traceroute, char **av)
 
 int init_prgm(t_traceroute *traceroute, int ac, char **av)
 {
-
     setbuf(stdout, NULL);
     init_traceroute(traceroute, av);
+    if (init_option(traceroute, ac, av) < 0)
+    {
+        return (-1);
+    }
 	traceroute->host = av[ac - 1];
     return (init_socket(traceroute));
 }

@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 15:08:23 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 15:42:56 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@
 #define OPT_M_E_STR "Invalid max TTL: "
 #define OPT_S_ERROR "-s [NUMBER]"
 #define OPT_S_E_STR "wrong total length, 88 instead of"
+
+#define MAX_TTL 255
 
 #define DEFAULT_HOPS 1
 #define DEFAULT_TIMEOUT 5

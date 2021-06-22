@@ -6,7 +6,7 @@
 #    By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/22 04:47:46 by cempassi          #+#    #+#              #
-#    Updated: 2021/06/22 15:08:44 by cempassi         ###   ########.fr        #
+#    Updated: 2021/06/22 15:57:24 by cempassi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,7 @@ SRCM += ft_traceroute.c
 SRCS += display.c
 SRCS += init.c
 SRCS += packet.c
-SRCS += options.c
+SRCS += option.c
 
 #Debug Files
 DSYM += $(NAME).dSYM
@@ -98,7 +98,7 @@ $(OBJM) : $(PATHO)%.o : %.c $(INCS)
 	printf "$(BLUE)Compiling $<\n$(NC)"
 
 #Debug
-$(NAMEDB): $(CLEAR) $(LIBDB) $(PATHO) $(OBJD) $(OBJMD) $(INCS)
+$(NAMEDB): $(LIBDB) $(PATHO) $(OBJD) $(OBJMD) $(INCS)
 	$(CC)  $(DFLAGS) $(OBJD) $(OBJMD) $(LIBDB) -o $@ 
 	
 $(OBJD) : $(PATHO)db%.o : %.c $(INCS)
