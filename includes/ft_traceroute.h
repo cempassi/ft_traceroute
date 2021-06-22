@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 15:42:56 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 19:51:30 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@
 #include <netinet/ip_icmp.h>
 #include <netinet/udp.h>
 #include <stdint.h>
-#include <sys/_types/_fd_def.h>
-#include <sys/_types/_timeval.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
