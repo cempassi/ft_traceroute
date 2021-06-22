@@ -6,14 +6,13 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 15:46:55 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 19:10:01 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
 #include <stdio.h>
 #include <sysexits.h>
-
 
 static int 	init_socket(t_traceroute *traceroute)
 {
