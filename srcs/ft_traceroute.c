@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 19:52:35 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/06/22 20:07:50 by cempassi         ###   ########.fr       */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
@@ -95,7 +95,7 @@ static int send_packets(t_traceroute *traceroute, char *payload,
     return (0);
 }
 
-static int recv_packet(t_traceroute *traceroute)
+static int recv_packet(t_traceroute *traceroute, int socket)
 {
     char            buffer[512];
     int             result;
@@ -103,7 +103,7 @@ static int recv_packet(t_traceroute *traceroute)
     socklen_t       address_len;
 
     ft_bzero(buffer, 512);
-    result = recvfrom(traceroute->icmp, buffer, 512, MSG_DONTWAIT, &address,
+    result = recvfrom(socket, buffer, 512, MSG_DONTWAIT, &address,
                       &address_len);
     if (result < 0)
     {
@@ -132,17 +132,17 @@ static int select_packets(t_traceroute *traceroute)
 		ft_dprintf(STDERR_FILENO, "%s: Needs priviledged access\n", traceroute->name);
 		return (-1);
 	}
-    FD_SET(traceroute->icmp, &set);
+    FD_SET(fake_socket, &set);
     while (probe++ < traceroute->probes)
     {
         timeout.tv_sec = traceroute->timeout;
         timeout.tv_usec = 0;
-        if (bind(traceroute->icmp, binding->ai_addr, binding->ai_addrlen))
-        {
-            dprintf(STDERR_FILENO, "%s: binding failed\n", traceroute->name);
-            return (-1);
-        }
-        result = select(traceroute->icmp + 1, &set, NULL, NULL, &timeout);
+         if (bind(traceroute->icmp, binding->ai_addr, binding->ai_addrlen))
+         {
+             dprintf(STDERR_FILENO, "%s: binding failed\n", traceroute->name);
+             return (-1);
+         }
+        result = select(fake_socket + 1, &set, NULL, NULL, &timeout);
         if (result < 0)
         {
             dprintf(STDERR_FILENO, "%s: select failed\n", traceroute->name);
@@ -153,7 +153,7 @@ static int select_packets(t_traceroute *traceroute)
             printf(" * ");
             continue;
         }
-        else if (recv_packet(traceroute) < 0)
+        else if (recv_packet(traceroute, fake_socket) < 0)
         {
             return (-1);
         }
