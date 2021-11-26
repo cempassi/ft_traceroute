@@ -6,41 +6,68 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/06/22 19:53:16 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/24 22:15:14 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
+#include <errno.h>
 #include <stdio.h>
 #include <sysexits.h>
 
-static int 	init_socket(t_traceroute *traceroute)
+static int init_socket(t_traceroute *traceroute)
 {
-	if ((traceroute->udp = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
-	{
-		traceroute->exit = EX_OSERR;
-		ft_dprintf(STDERR_FILENO, "%s: Needs priviledged access\n", traceroute->name);
-		return (-1);
-	}
-	if ((traceroute->icmp = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
-	{
-		traceroute->exit = EX_OSERR;
-		ft_dprintf(STDERR_FILENO, "%s: Needs priviledged access\n", traceroute->name);
-		return (-1);
-	}
-	return (0);
+    int on = 1;
+
+    if ((traceroute->output = socket(PF_INET, SOCK_RAW, IPPROTO_UDP)) < 0)
+    {
+        traceroute->exit = EX_OSERR;
+        dprintf(STDERR_FILENO, "%s: Needs priviledged access\n",
+                traceroute->name);
+        return (-1);
+    }
+    if ((setsockopt(traceroute->output, IPPROTO_IP, IP_HDRINCL, &on,
+                    sizeof(on)))
+        < 0)
+    {
+        dprintf(STDERR_FILENO, "ft_traceroute: setsockopt failed: %s\n",
+                strerror(errno));
+        return (-1);
+    }
+
+    if ((setsockopt(traceroute->output, IPPROTO_IP, IP_TTL, &on, sizeof(on)))
+        != SUCCESS)
+    {
+        dprintf(STDERR_FILENO, "ft_traceroute: setsockopt(): %s\n",
+                strerror(errno));
+        return(-1);
+    }
+    if ((traceroute->input = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
+    {
+        traceroute->exit = EX_OSERR;
+        dprintf(STDERR_FILENO, "%s: Needs priviledged access\n",
+                traceroute->name);
+        return (-1);
+    }
+    return (0);
 }
 
 static void init_traceroute(t_traceroute *traceroute, char **av)
 {
+    uint32_t headers_len = IP_HEADER_LEN + UDP_HEADER_LEN;
+    uint32_t base_data = sizeof(struct timeval) + 16;
+    uint32_t payload_size = DEFAULT_PAYLOAD_LEN - base_data;
+
     ft_bzero(traceroute, sizeof(t_traceroute));
     traceroute->name = av[0];
     traceroute->hops = DEFAULT_HOPS;
     traceroute->timeout = DEFAULT_TIMEOUT;
     traceroute->probes = DEFAULT_PROBES;
     traceroute->exit = 0;
-    traceroute->payload_size = DEFAULT_PAYLOAD_LEN;
+    traceroute->payload_size = payload_size;
     traceroute->payload = DEFAULT_PAYLOAD;
+    traceroute->packet_size = headers_len + base_data + payload_size;
+    traceroute->dest_port = DEFAULT_DST_PORT;
 }
 
 int init_prgm(t_traceroute *traceroute, int ac, char **av)
@@ -51,6 +78,6 @@ int init_prgm(t_traceroute *traceroute, int ac, char **av)
     {
         return (-1);
     }
-	traceroute->host = av[ac - 1];
+    traceroute->host = av[ac - 1];
     return (init_socket(traceroute));
 }
