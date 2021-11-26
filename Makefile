@@ -6,7 +6,7 @@
 #    By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/22 04:47:46 by cempassi          #+#    #+#              #
-#    Updated: 2021/06/22 15:57:24 by cempassi         ###   ########.fr        #
+#    Updated: 2021/11/24 21:00:23 by cempassi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,11 +50,13 @@ PATHLI = libft/includes
 INCS += ft_traceroute.h
 
 #Sources
-SRCM += ft_traceroute.c
+SRCM += main.c
 SRCS += display.c
 SRCS += init.c
 SRCS += packet.c
 SRCS += option.c
+SRCS += resolve.c
+SRCS += setup.c
 
 #Debug Files
 DSYM += $(NAME).dSYM
