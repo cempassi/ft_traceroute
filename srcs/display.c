@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:41:07 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 19:31:30 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 19:58:33 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 
 void display_help(char *name)
 {
-    dprintf(STDERR_FILENO, "usage: %s [-hoqv] [-c count] ", name);
-    dprintf(STDERR_FILENO, "[-i wait] [-m ttl] [-s packetsize] host\n");
+    dprintf(STDERR_FILENO, "usage: %s [-h] [-q queries] ", name);
+    dprintf(STDERR_FILENO, "[-w wait] [-m max-hops] host\n");
 }
 
 

@@ -55,8 +55,7 @@ int resolve_node(t_traceroute *traceroute, t_socket *recv)
     char  node[125];
     char *ip;
 
-    // Get Host
-    // Display host address
+    // Check if current host is previous host
     if (traceroute->current.sin_addr.s_addr == recv->sin_addr.s_addr)
     {
         return (0);
@@ -78,6 +77,7 @@ int resolve_node(t_traceroute *traceroute, t_socket *recv)
     }
     else
     {
+        // Display host address
         ip = inet_ntoa(recv->sin_addr);
         printf("%s (%s) ", node, ip);
     }

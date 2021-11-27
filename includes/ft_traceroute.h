@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 19:24:14 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 20:04:03 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,20 +23,23 @@
 #include <sys/time.h>
 #include <sys/types.h>
 
-#define OPTSTR "hm:v"
+#define OPTSTR "hm:q:w:"
 
 #define OPT_H 0x0001
-#define OPT_V 0x0002
-#define OPT_M 0x0004
+#define OPT_M 0x0002
+#define OPT_Q 0x0004
+#define OPT_W 0x0008
 
-#define OPT_C_ERROR "-q [NUMBER]"
-#define OPT_C_E_STR "invalid number of probes: "
+#define OPT_Q_ERROR "-q [NUMBER]"
+#define OPT_Q_E_STR "invalid number of probes, no more than 10: "
 #define OPT_M_ERROR "-m [NUMBER]"
-#define OPT_M_E_STR "Invalid max TTL: "
-#define OPT_S_ERROR "-s [NUMBER]"
-#define OPT_S_E_STR "wrong total length, 88 instead of"
+#define OPT_M_E_STR "Invalid max hops, no more than 250: "
+#define OPT_W_ERROR "-w [NUMBER]"
+#define OPT_W_E_STR "Invalid max wait time, no more than 10: "
 
-#define MAX_TTL 1
+#define MAX_TTL 250
+#define MAX_PROBES 10
+#define MAX_WAIT 10
 
 #define DEFAULT_HOPS 10
 #define DEFAULT_TIMEOUT 5
@@ -102,7 +105,7 @@ typedef struct s_traceroute
 int init_prgm(t_traceroute *traceroute, int ac, char **av);
 int init_option(t_traceroute *traceroute, int ac, char **av);
 
-int generate_payload(t_traceroute *traceroute, t_packet *template);
+void generate_payload(t_traceroute *traceroute, t_packet *template);
 
 int resolve_dst(t_traceroute *traceroute);
 int resolve_node(t_traceroute *traceroute, t_socket *recv);
