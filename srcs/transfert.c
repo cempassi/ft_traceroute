@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 21:41:13 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 18:32:13 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 19:16:35 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,21 @@
 #include <stdio.h>
 #include <errno.h>
 
+void delta_time(t_time *time)
+{
+	double delta;
+    double sent;
+    double recv;
+
+    sent   = (double)time->sent.tv_sec * 1000000.0 + (double)time->sent.tv_usec;
+    recv   = (double)time->recv.tv_sec * 1000000.0 + (double)time->recv.tv_usec;
+
+    delta = (recv - sent) / 1000.0;
+    if (delta < 0.1)
+        printf("%.4f ms ", delta);
+    else
+        printf("%.3f ms ", delta);
+}
 
 static int recv_packet(t_traceroute *traceroute, int socket, t_time *time)
 {
@@ -22,9 +37,7 @@ static int recv_packet(t_traceroute *traceroute, int socket, t_time *time)
     int             result;
     t_socket        address;
     socklen_t       address_len;
-    t_response      *response;
 
-    (void)time;
     address_len = sizeof(address);
     ft_bzero(buffer, 512);
     ft_bzero(&address, sizeof(t_socket));
@@ -34,11 +47,10 @@ static int recv_packet(t_traceroute *traceroute, int socket, t_time *time)
     {
         dprintf(STDERR_FILENO, "%s: failed to recv packet\n", traceroute->name);
     }
-    response = (t_response *)buffer;
-    printf("type: %d ", response->header.type);
-    resolve_response(traceroute, (t_response *)buffer, &address);
+    get_time(traceroute, &time->recv);
+    resolve_node(traceroute, &address);
+    delta_time(time);
     if (((t_response *)buffer)->header.type == ICMP_UNREACH) {
-        printf("I'm");
         traceroute->finished = 1;
     }
     return (0);
@@ -70,7 +82,6 @@ int select_packets(t_traceroute *traceroute, t_time *time)
     {
         return (-1);
     }
-    get_time(traceroute, &time->recv);
     return (0);
 }
 
@@ -88,4 +99,3 @@ int send_packets(t_traceroute *traceroute, t_packet *packet, t_time *time)
     }
     return (0);
 }
-

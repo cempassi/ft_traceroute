@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 17:42:01 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 19:18:52 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ static int init_socket(t_traceroute *traceroute)
                 traceroute->name);
         return (-1);
     }
+
     if ((setsockopt(traceroute->output, IPPROTO_IP, IP_HDRINCL, &on,
                     sizeof(on)))
         < 0)
@@ -35,13 +36,6 @@ static int init_socket(t_traceroute *traceroute)
         return (-1);
     }
 
-    if ((setsockopt(traceroute->output, IPPROTO_IP, IP_TTL, &on, sizeof(on)))
-        != SUCCESS)
-    {
-        dprintf(STDERR_FILENO, "ft_traceroute: setsockopt(): %s\n",
-                strerror(errno));
-        return(-1);
-    }
     if ((traceroute->input = socket(PF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
     {
         traceroute->exit = EX_OSERR;

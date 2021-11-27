@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/22 15:02:55 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/21 13:47:46 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 19:28:42 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ static int check_arg(t_traceroute *traceroute, int64_t number)
     {
         dprintf(2, "%s: %s `%ld`\n", traceroute->name, OPT_M_E_STR,
                        number);
+        traceroute->exit = EX_USAGE;
     }
     return (traceroute->exit == EX_USAGE ? -1 : number);
 }

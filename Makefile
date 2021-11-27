@@ -6,7 +6,7 @@
 #    By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/22 04:47:46 by cempassi          #+#    #+#              #
-#    Updated: 2021/11/26 21:40:59 by cempassi         ###   ########.fr        #
+#    Updated: 2021/11/27 19:17:57 by cempassi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,6 @@ INCS += ft_traceroute.h
 SRCM += main.c
 SRCS += display.c
 SRCS += init.c
-SRCS += packet.c
 SRCS += option.c
 SRCS += resolve.c
 SRCS += setup.c

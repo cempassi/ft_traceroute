@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 17:35:43 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 19:24:14 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ typedef struct s_traceroute
     uint32_t payload_size;
     char *   payload;
     t_socket dest;
-    uint16_t dest_port;
     t_socket current;
     int      finished;
 } t_traceroute;
@@ -106,15 +105,14 @@ int init_option(t_traceroute *traceroute, int ac, char **av);
 int generate_payload(t_traceroute *traceroute, t_packet *template);
 
 int resolve_dst(t_traceroute *traceroute);
-int resolve_response(t_traceroute *traceroute, t_response *response,
-                     t_socket *address);
+int resolve_node(t_traceroute *traceroute, t_socket *recv);
 
 void setup_udphdr(t_traceroute *traceroute, t_packet *packet, uint16_t port);
 void setup_iphdr(t_traceroute *traceroute, t_packet *packet, uint8_t ttl,
                  uint16_t seq);
 
 uint16_t checksum(void *addr, int count);
-void     get_time(t_traceroute *traceroute, void *time);
+void get_time(t_traceroute *traceroute, struct timeval *time);
 
 int select_packets(t_traceroute *traceroute, t_time *time);
 int send_packets(t_traceroute *traceroute, t_packet *packet, t_time *time);
@@ -127,10 +125,5 @@ int send_packets(t_traceroute *traceroute, t_packet *packet, t_time *time);
 
 void display_help(char *name);
 void display_start(t_traceroute *traceroute);
-void display_icmppacket(struct s_response *packet);
-void display_response(t_response *packet, int recieved);
-void display_ipheader(t_ipheader *header);
-void display_udpheader(t_udpheader *header, char *payload);
-void print_bytes(int bytes, void *msg);
 
 #endif

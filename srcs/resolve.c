@@ -49,8 +49,7 @@ int resolve_dst(t_traceroute *traceroute)
     return (0);
 }
 
-int resolve_response(t_traceroute *traceroute, t_response *response,
-                     t_socket *recv)
+int resolve_node(t_traceroute *traceroute, t_socket *recv)
 {
     int   error;
     char  node[125];
@@ -58,10 +57,8 @@ int resolve_response(t_traceroute *traceroute, t_response *response,
 
     // Get Host
     // Display host address
-    (void)response;
     if (traceroute->current.sin_addr.s_addr == recv->sin_addr.s_addr)
     {
-        printf("R ");
         return (0);
     }
     recv->sin_family = AF_INET;
@@ -82,9 +79,8 @@ int resolve_response(t_traceroute *traceroute, t_response *response,
     else
     {
         ip = inet_ntoa(recv->sin_addr);
-        printf("%s (%s) R ", node, ip);
+        printf("%s (%s) ", node, ip);
     }
     traceroute->current = *recv;
-    // Free list from getaddrinfo
     return (0);
 }
