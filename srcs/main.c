@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 19:28:36 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 20:13:15 by cempassi         ###   ########.fr       */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
@@ -17,9 +17,9 @@
 
 static int main_loop(t_traceroute *traceroute, t_packet *template)
 {
-    uint8_t  ttl;
-    uint8_t  seq;
-    t_time   time;
+    uint8_t ttl;
+    uint8_t seq;
+    t_time  time;
 
     ttl = 1;
     while (ttl <= traceroute->hops && traceroute->finished == 0)
@@ -31,9 +31,10 @@ static int main_loop(t_traceroute *traceroute, t_packet *template)
             ft_bzero(&time, sizeof(t_time));
             setup_iphdr(traceroute, template, ttl, seq + ttl);
             setup_udphdr(traceroute, template, traceroute->dest.sin_port);
-            send_packets(traceroute, template, &time);
-            traceroute->dest.sin_port = htons(ntohs(traceroute->dest.sin_port) + 1);
-            select_packets(traceroute, &time);
+            if (send_packets(traceroute, template, &time))
+                return (-1);
+            if(recv_packets(traceroute, &time))
+                return(-1);
             seq++;
         }
         printf("\n");
@@ -52,7 +53,8 @@ static int run_prgm(t_traceroute *traceroute)
         dprintf(2, "%s: payload allocation failed.\n", traceroute->name);
         return (-1);
     }
-    if (resolve_dst(traceroute) < 0) {
+    if (resolve_dst(traceroute) < 0)
+    {
         return (-1);
     }
     generate_payload(traceroute, template);

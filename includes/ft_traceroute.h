@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 20:04:03 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 20:13:13 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ void setup_iphdr(t_traceroute *traceroute, t_packet *packet, uint8_t ttl,
 uint16_t checksum(void *addr, int count);
 void get_time(t_traceroute *traceroute, struct timeval *time);
 
-int select_packets(t_traceroute *traceroute, t_time *time);
 int send_packets(t_traceroute *traceroute, t_packet *packet, t_time *time);
+int recv_packets(t_traceroute *traceroute, t_time *time);
 
 /*
 *****************************************************
