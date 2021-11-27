@@ -1,5 +1,6 @@
 #include "ft_traceroute.h"
 #include "memory.h"
+#include <arpa/inet.h>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sysexits.h>
@@ -48,22 +49,26 @@ int resolve_dst(t_traceroute *traceroute)
     return (0);
 }
 
-int resolve_response(t_traceroute *traceroute, t_response *response)
+int resolve_response(t_traceroute *traceroute, t_response *response,
+                     t_socket *recv)
 {
-    t_socket address;
-    int      error;
-    char     current[INET_ADDRSTRLEN];
-    char     dns[125];
-    char     service[125];
+    int   error;
+    char  node[125];
+    char *ip;
 
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = response->outer.saddr;
-    address.sin_port = response->udp.uh_dport;
     // Get Host
-    if ((error
-         = getnameinfo((struct sockaddr *)&address, sizeof(struct sockaddr),
-                       dns, 125, service, 125, NI_NUMERICHOST | NI_NUMERICSERV))
-        != 0)
+    // Display host address
+    (void)response;
+    if (traceroute->current.sin_addr.s_addr == recv->sin_addr.s_addr)
+    {
+        printf("R ");
+        return (0);
+    }
+    recv->sin_family = AF_INET;
+    recv->sin_port = 0;
+    if ((error = getnameinfo((struct sockaddr *)recv, sizeof(struct sockaddr),
+                             node, 125, NULL, 0, 0))
+        < 0)
     {
         traceroute->exit = EX_NOHOST;
         if (error == EAI_NONAME)
@@ -74,17 +79,12 @@ int resolve_response(t_traceroute *traceroute, t_response *response)
                     traceroute->name, gai_strerror(error));
         return (-1);
     }
-    printf("%s ", dns);
-
-    // Display host address
-    t_socket *c_address = (t_socket *)&response->outer.saddr;
-    if (traceroute->current.sin_addr.s_addr != c_address->sin_addr.s_addr)
+    else
     {
-        inet_ntop(AF_INET, &address.sin_addr.s_addr, current, INET_ADDRSTRLEN);
-        printf("(%s)", current);
-        traceroute->current.sin_addr.s_addr = c_address->sin_addr.s_addr;
+        ip = inet_ntoa(recv->sin_addr);
+        printf("%s (%s) R ", node, ip);
     }
-
+    traceroute->current = *recv;
     // Free list from getaddrinfo
     return (0);
 }

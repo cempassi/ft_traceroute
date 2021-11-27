@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/26 21:31:45 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 17:42:01 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ static void init_traceroute(t_traceroute *traceroute, char **av)
     traceroute->payload_size = DEFAULT_PAYLOAD_LEN;
     traceroute->payload = DEFAULT_PAYLOAD;
     traceroute->packet_size = packet_size;
-    traceroute->dest_port = DEFAULT_DST_PORT;
 }
 
 int init_prgm(t_traceroute *traceroute, int ac, char **av)

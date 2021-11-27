@@ -6,11 +6,12 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 21:41:13 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 00:51:32 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 18:32:13 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
+#include "memory.h"
 #include <stdio.h>
 #include <errno.h>
 
@@ -19,21 +20,25 @@ static int recv_packet(t_traceroute *traceroute, int socket, t_time *time)
 {
     char            buffer[512];
     int             result;
-    struct sockaddr address;
+    t_socket        address;
     socklen_t       address_len;
+    t_response      *response;
 
     (void)time;
     address_len = sizeof(address);
     ft_bzero(buffer, 512);
     ft_bzero(&address, sizeof(t_socket));
     result
-        = recvfrom(socket, buffer, 512, MSG_DONTWAIT, &address, &address_len);
+        = recvfrom(socket, buffer, 512, MSG_DONTWAIT, (struct sockaddr*)&address, &address_len);
     if (result < 0)
     {
         dprintf(STDERR_FILENO, "%s: failed to recv packet\n", traceroute->name);
     }
-    resolve_response(traceroute, (t_response *)buffer);
+    response = (t_response *)buffer;
+    printf("type: %d ", response->header.type);
+    resolve_response(traceroute, (t_response *)buffer, &address);
     if (((t_response *)buffer)->header.type == ICMP_UNREACH) {
+        printf("I'm");
         traceroute->finished = 1;
     }
     return (0);
@@ -58,6 +63,7 @@ int select_packets(t_traceroute *traceroute, t_time *time)
     }
     else if (result == 0)
     {
+        ft_bzero(&traceroute->current, sizeof(t_socket));
         printf(" * ");
     }
     else if (recv_packet(traceroute, traceroute->input, time) < 0)

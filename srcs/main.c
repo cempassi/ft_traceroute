@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 00:52:12 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 18:36:01 by cempassi         ###   ########.fr       */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
@@ -28,10 +28,10 @@ static int traceroute_loop(t_traceroute *traceroute, t_packet *template)
         seq = 0;
         while (seq < traceroute->probes)
         {
-            setup_iphdr(traceroute, template, ttl, seq);
+            setup_iphdr(traceroute, template, ttl, seq + ttl);
             setup_udphdr(traceroute, template, traceroute->dest.sin_port);
             send_packets(traceroute, template, &time);
-            traceroute->dest.sin_port += 1;
+            traceroute->dest.sin_port = htons(ntohs(traceroute->dest.sin_port) + 1);
             select_packets(traceroute, &time);
             seq++;
         }
