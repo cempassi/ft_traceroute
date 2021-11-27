@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 21:41:13 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 20:14:03 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 21:55:12 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,13 @@ void delta_time(t_time *time)
         printf("%.3f ms ", delta);
 }
 
-static int process_packet(t_traceroute *traceroute, int socket, t_time *time)
+static int validate_packet(t_packet *sent, t_response *recv)
+{
+    return (sent->ipheader.daddr == recv->inner.daddr ? 0 : -1);
+}
+
+static int process_packet(t_traceroute *traceroute, t_packet *packet,
+                          t_time *time)
 {
     char      buffer[512];
     int       result;
@@ -41,12 +47,16 @@ static int process_packet(t_traceroute *traceroute, int socket, t_time *time)
     address_len = sizeof(address);
     ft_bzero(buffer, 512);
     ft_bzero(&address, sizeof(t_socket));
-    result = recvfrom(socket, buffer, 512, MSG_DONTWAIT,
+    result = recvfrom(traceroute->input, buffer, 512, MSG_DONTWAIT,
                       (struct sockaddr *)&address, &address_len);
     if (result < 0)
     {
         dprintf(STDERR_FILENO, "%s: failed to recv packet\n", traceroute->name);
         return (-1);
+    }
+    if (validate_packet(packet, (t_response *)buffer))
+    {
+        return (recv_packets(traceroute, packet, time));
     }
     get_time(traceroute, &time->recv);
     resolve_node(traceroute, &address);
@@ -58,7 +68,7 @@ static int process_packet(t_traceroute *traceroute, int socket, t_time *time)
     return (0);
 }
 
-int recv_packets(t_traceroute *traceroute, t_time *time)
+int recv_packets(t_traceroute *traceroute, t_packet *packet, t_time *time)
 {
     struct timeval timeout;
     int            result;
@@ -80,7 +90,7 @@ int recv_packets(t_traceroute *traceroute, t_time *time)
         ft_bzero(&traceroute->current, sizeof(t_socket));
         printf(" * ");
     }
-    else if (process_packet(traceroute, traceroute->input, time) < 0)
+    else if (process_packet(traceroute, packet, time) < 0)
     {
         return (-1);
     }

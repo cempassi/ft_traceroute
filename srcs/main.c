@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 20:13:15 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 21:56:12 by cempassi         ###   ########.fr       */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
@@ -33,7 +33,7 @@ static int main_loop(t_traceroute *traceroute, t_packet *template)
             setup_udphdr(traceroute, template, traceroute->dest.sin_port);
             if (send_packets(traceroute, template, &time))
                 return (-1);
-            if(recv_packets(traceroute, &time))
+            if(recv_packets(traceroute, template, &time))
                 return(-1);
             seq++;
         }
