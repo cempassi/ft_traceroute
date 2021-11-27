@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:57:52 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/24 22:15:14 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/26 21:31:45 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,7 @@ static int init_socket(t_traceroute *traceroute)
 
 static void init_traceroute(t_traceroute *traceroute, char **av)
 {
-    uint32_t headers_len = IP_HEADER_LEN + UDP_HEADER_LEN;
-    uint32_t base_data = sizeof(struct timeval) + 16;
-    uint32_t payload_size = DEFAULT_PAYLOAD_LEN - base_data;
+    uint32_t packet_size = IP_HEADER_LEN + UDP_HEADER_LEN + DEFAULT_PAYLOAD_LEN;
 
     ft_bzero(traceroute, sizeof(t_traceroute));
     traceroute->name = av[0];
@@ -64,9 +62,9 @@ static void init_traceroute(t_traceroute *traceroute, char **av)
     traceroute->timeout = DEFAULT_TIMEOUT;
     traceroute->probes = DEFAULT_PROBES;
     traceroute->exit = 0;
-    traceroute->payload_size = payload_size;
+    traceroute->payload_size = DEFAULT_PAYLOAD_LEN;
     traceroute->payload = DEFAULT_PAYLOAD;
-    traceroute->packet_size = headers_len + base_data + payload_size;
+    traceroute->packet_size = packet_size;
     traceroute->dest_port = DEFAULT_DST_PORT;
 }
 

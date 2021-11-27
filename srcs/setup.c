@@ -6,29 +6,30 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/24 20:53:57 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/24 22:13:48 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 00:39:33 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
+#include <errno.h>
+#include <stdio.h>
 
 void setup_iphdr(t_traceroute *traceroute, t_packet *packet, uint8_t ttl,
                  uint16_t seq)
 {
     t_ipheader *iphdr = &packet->ipheader;
 
-    iphdr->ip_v = 4;
-    iphdr->ip_hl = IP_HEADER_LEN / 4;
-    iphdr->ip_tos = 0;
-    iphdr->ip_len = htons(traceroute->packet_size);
-    iphdr->ip_id = htons((uint16_t)(DEFAULT_SRC_PORT + seq));
-    iphdr->ip_off = htons(0);
-    iphdr->ip_ttl = ttl;
-    iphdr->ip_p = AF_INET;
-    iphdr->ip_sum = 0;
-    iphdr->ip_src.s_addr = INADDR_ANY;
-    iphdr->ip_dst.s_addr = traceroute->dest.sin_addr.s_addr;
-    (void)iphdr;
+    iphdr->version = 4;
+    iphdr->ihl = IP_HEADER_LEN / 4;
+    iphdr->tos = 0;
+    iphdr->tot_len = htons(traceroute->packet_size);
+    iphdr->id = htons((uint16_t)(DEFAULT_SRC_PORT + seq));
+    iphdr->frag_off = htons(0);
+    iphdr->protocol = IPPROTO_UDP;
+    iphdr->check = 0;
+    iphdr->saddr = INADDR_ANY;
+    iphdr->daddr = traceroute->dest.sin_addr.s_addr;
+    iphdr->ttl = ttl;
 }
 
 void setup_udphdr(t_traceroute *traceroute, t_packet *packet, uint16_t port)

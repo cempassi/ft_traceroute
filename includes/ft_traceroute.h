@@ -6,14 +6,13 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:09:35 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/24 21:52:34 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/27 00:51:18 by cempassi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_TRACEROUTE_H
 #define FT_TRACEROUTE_H
 #include <netdb.h>
-#include <netinet/ip.h>
 #include <arpa/inet.h>
 #include <netinet/ip_icmp.h>
 #include <netinet/udp.h>
@@ -39,9 +38,9 @@
 
 #define MAX_TTL 1
 
-#define DEFAULT_HOPS 3
+#define DEFAULT_HOPS 10
 #define DEFAULT_TIMEOUT 5
-#define DEFAULT_PROBES 1
+#define DEFAULT_PROBES 3
 #define DEFAULT_PAYLOAD "42"
 #define DEFAULT_PAYLOAD_LEN 50
 #define DEFAULT_SRC_PORT 3490
@@ -55,8 +54,9 @@
 #define TIME_DATA sizeof(t_time)
 
 typedef struct addrinfo     t_addrinfo;
-typedef struct ip           t_ipheader;
+typedef struct iphdr        t_ipheader;
 typedef struct udphdr       t_udpheader;
+typedef struct icmphdr      t_icmpheader;
 typedef struct sockaddr_in  t_socket;
 
 typedef struct s_time
@@ -68,16 +68,16 @@ typedef struct s_time
 typedef struct s_packet {
 	t_ipheader     ipheader;
 	t_udpheader    udpheader;
-	uint8_t        seq;
-	uint8_t        ttl;
-	struct timeval sent;
-    char           *payload;
+    char           payload[];
 }              t_packet;
 
-struct s_response {
-    struct icmphdr header;
-    t_packet packet;
-};
+typedef struct s_response {
+	t_ipheader     outer;
+    t_icmpheader   header;
+    t_ipheader     inner;
+    t_udpheader    udp;
+    char           payload[];
+} t_response;
 
 typedef struct s_traceroute
 {
@@ -95,15 +95,27 @@ typedef struct s_traceroute
     char     *payload;
     t_socket dest;
     uint16_t dest_port;
+    t_socket current;
+    int     finished;
 }              t_traceroute;
 
 int init_prgm(t_traceroute *traceroute, int ac, char **av);
 int init_option(t_traceroute *traceroute, int ac, char **av);
-char *generate_payload(t_traceroute *traceroute);
+
+int generate_payload(t_traceroute *traceroute, t_packet *template);
+
 int resolve_dst(t_traceroute *traceroute);
+int resolve_response(t_traceroute *traceroute, t_response *response);
+
 void setup_udphdr(t_traceroute *traceroute, t_packet *packet, uint16_t port);
 void setup_iphdr(t_traceroute *traceroute, t_packet *packet, uint8_t ttl,
                  uint16_t seq);
+
+uint16_t 	checksum(void *addr, int count);
+void        get_time(t_traceroute *traceroute, void *time);
+
+int select_packets(t_traceroute *traceroute, t_time *time);
+int send_packets(t_traceroute *traceroute, t_packet *packet, t_time *time);
 
 /*
 *****************************************************
@@ -114,7 +126,9 @@ void setup_iphdr(t_traceroute *traceroute, t_packet *packet, uint8_t ttl,
 void display_help(char *name);
 void display_start(t_traceroute *traceroute);
 void display_icmppacket(struct s_response *packet);
+void display_response(t_response *packet, int recieved);
 void display_ipheader(t_ipheader *header);
 void display_udpheader(t_udpheader *header, char *payload);
+void print_bytes(int bytes, void *msg);
 
 #endif

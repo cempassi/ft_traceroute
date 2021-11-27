@@ -6,7 +6,7 @@
 #    By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/22 04:47:46 by cempassi          #+#    #+#              #
-#    Updated: 2021/11/24 21:00:23 by cempassi         ###   ########.fr        #
+#    Updated: 2021/11/26 21:40:59 by cempassi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,6 +57,8 @@ SRCS += packet.c
 SRCS += option.c
 SRCS += resolve.c
 SRCS += setup.c
+SRCS += transfert.c
+SRCS += utils.c
 
 #Debug Files
 DSYM += $(NAME).dSYM
