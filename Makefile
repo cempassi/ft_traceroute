@@ -6,7 +6,7 @@
 #    By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/22 04:47:46 by cempassi          #+#    #+#              #
-#    Updated: 2021/11/27 19:17:57 by cempassi         ###   ########.fr        #
+#    Updated: 2021/11/29 15:10:23 by cempassi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,7 +73,7 @@ OBJD = $(patsubst %.c, $(PATHO)db%.o, $(SRCS))
 WFLAGS += -Wall
 WFLAGS += -Werror
 WFLAGS += -Wextra
-DFLAGS += -fsanitize=address
+DFLAGS += -fsanitize=address,leak
 IFLAGS = -I$(PATHI) -I$(PATHLI)
 CFLAGS = $(WFLAGS)
 

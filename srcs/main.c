@@ -6,7 +6,7 @@
 /*   By: cempassi <cempassi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/20 11:05:45 by cempassi          #+#    #+#             */
-/*   Updated: 2021/11/27 21:56:12 by cempassi         ###   ########.fr       */
+/*   Updated: 2021/11/29 15:12:53 by cempassi         ###   ########.fr       */
 /* ************************************************************************** */
 
 #include "ft_traceroute.h"
@@ -55,6 +55,7 @@ static int run_prgm(t_traceroute *traceroute)
     }
     if (resolve_dst(traceroute) < 0)
     {
+        ft_memdel((void **)&template);
         return (-1);
     }
     generate_payload(traceroute, template);
